@@ -19,7 +19,7 @@ public class Telefone {
 	private String numero;
 	
 	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name="usuario_id")
 	private Usuario usuario;
 

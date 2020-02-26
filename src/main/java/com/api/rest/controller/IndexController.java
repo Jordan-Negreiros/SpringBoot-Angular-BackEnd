@@ -1,42 +1,40 @@
 package com.api.rest.controller;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.rest.model.Usuario;
+import com.api.rest.repository.UsuarioRepository;
 
 @RestController /* Arquitetura Rest */
 @RequestMapping(value = "/usuario")
 public class IndexController {
+	
+	@Autowired /* Injeção de Dependencia Spring, no CDI seria @Inject */
+	private UsuarioRepository usuarioRepository;
 
 	/* Serviço RESTful */
+	@GetMapping(value = "/{id}", produces = "application/json")
+	public ResponseEntity<Usuario> init(@PathVariable(value = "id") Long id) {
+
+		Optional<Usuario> usuario = usuarioRepository.findById(id);
+
+		return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+	}
+	
 	@GetMapping(value = "/", produces = "application/json")
-	public ResponseEntity<Usuario> init() {
-
-		Usuario usuario = new Usuario();
-		usuario.setId(50L);
-		usuario.setLogin("jordannegreirossantos@gmail.com");
-		usuario.setNome("Jordan Negreiros");
-		usuario.setSenha("123456789");
-
-		Usuario usuario2 = new Usuario();
-
-		usuario2.setId(30L);
-		usuario2.setLogin("jordannegreirossantos@hotmail.com");
-		usuario2.setNome("Jordan Negreiros dos Santos");
-		usuario2.setSenha("999999999");
+	public ResponseEntity<List<Usuario>> usuario() {
 		
-		List<Usuario> usuarios = new ArrayList<Usuario>();
+		List<Usuario> list = (List<Usuario>) usuarioRepository.findAll();
 		
-		usuarios.add(usuario);
-		usuarios.add(usuario2);
-
-		return new ResponseEntity(usuarios, HttpStatus.OK);
+		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
 	}
 }

@@ -19,10 +19,7 @@ public class IndexController {
 	@Autowired /* Injeção de Dependencia Spring, no CDI seria @Inject */
 	private UsuarioRepository usuarioRepository;
 
-	
-	
 	/* Serviço RESTful */
-	@CrossOrigin /* Libera requisições de qualquer servidor */
 	@GetMapping(value = "/{id}", produces = "application/json")
 	public ResponseEntity<Usuario> init(@PathVariable(value = "id") Long id) {
 		
@@ -31,7 +28,6 @@ public class IndexController {
 		return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
 	}
 
-	@CrossOrigin(origins = {"www.sistemadocliente2.com.br", "www.sistemadocliente3.com.br"}) /* libera requisições ao endpoint */
 	@GetMapping(value = "/", produces = "application/json")
 	public ResponseEntity<List<Usuario>> usuario() {
 		

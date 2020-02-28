@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -24,15 +25,17 @@ public class ProjetoapirestApplication implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProjetoapirestApplication.class, args);
+		System.out.println(new BCryptPasswordEncoder().encode("123"));
 	}
 
 
-	/* Cross Origin - Configuração centralizada */
+	// Libera acesso às origens específicas (mapeamento global)
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-
+		//registry.addMapping("/**"); // todos
 		registry.addMapping("/usuario/**")
-		.allowedMethods("POST", "PUT", "DELETE")
-		.allowedOrigins("cliente1.com", "cliente2.com");
+				.allowedMethods("POST", "PUT", "DELETE") // todos os endpoints do usuario
+				.allowedOrigins("localhost:8080", "www.google.com");
 	}
+
 }

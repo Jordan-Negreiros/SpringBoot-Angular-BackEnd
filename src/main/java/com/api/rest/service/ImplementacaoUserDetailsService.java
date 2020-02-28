@@ -2,6 +2,7 @@ package com.api.rest.service;
 
 import com.api.rest.model.Usuario;
 import com.api.rest.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ImplementacaoUserDetailsService implements UserDetailsService {
 
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Override

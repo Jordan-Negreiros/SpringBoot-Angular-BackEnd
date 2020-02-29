@@ -34,15 +34,18 @@ public class JWTTokenAutenticacaoService {
 
         /* Montagem do TOKEN */
         String JWT = Jwts.builder() /* Chama o gerador de TOKEN */
-                        .setSubject(username) /* adiciona o usuario */
-                        .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) /* Tempo de Expiração */
-                        .signWith(SignatureAlgorithm.HS512, SECRET).compact(); /* Compactação e algoritmo de geração senha */
+                .setSubject(username) /* adiciona o usuario */
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) /* Tempo de Expiração */
+                .signWith(SignatureAlgorithm.HS512, SECRET).compact(); /* Compactação e algoritmo de geração senha */
 
         /* Junta o TOKEN com o PREFIXO */
         String token = TOKEN_PREFIX + " " + JWT;
 
         /* Adiciona no cabeçalho Http */
         response.addHeader(HEADER_STRING, token);
+
+        /* Liberando resposta para porta diferente do projeto Angular */
+        response.addHeader("Access-Control-Allow-Origin", "*");
 
         /* Escreve o TOKEN como resposta no corpo HTtp */
         response.getWriter().write("{\"Authorization\": \"" + token + "\"}");
@@ -57,12 +60,12 @@ public class JWTTokenAutenticacaoService {
         if (token != null) {
             /* faz a validação do TOKEN do usuário */
             String user = Jwts.parser().setSigningKey(SECRET) /* Retorna TOKEN */
-                            .parseClaimsJws(token.replace(TOKEN_PREFIX, "")) /* Rentorna o TOKEN sem o prefixo */
-                            .getBody().getSubject(); /* Retorna o Usuário */
+                    .parseClaimsJws(token.replace(TOKEN_PREFIX, "")) /* Rentorna o TOKEN sem o prefixo */
+                    .getBody().getSubject(); /* Retorna o Usuário */
             if (user != null) {
 
                 Usuario usuario = ApplicationContexLoad.getApplicationContext()
-                                    .getBean(UsuarioRepository.class).findUserByLogin(user);
+                        .getBean(UsuarioRepository.class).findUserByLogin(user);
 
                 /* Retornar usuário logado */
                 if (usuario != null) {
@@ -72,7 +75,9 @@ public class JWTTokenAutenticacaoService {
                 }
             }
         }
-            return null; /* Não autorizado */
+        /* Liberando resposta para porta diferente do projeto Angular */
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        return null; /* Não autorizado */
     }
 
 }

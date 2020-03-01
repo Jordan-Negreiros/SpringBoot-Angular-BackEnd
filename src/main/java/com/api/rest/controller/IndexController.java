@@ -40,7 +40,16 @@ public class IndexController {
 		
 		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
 	}
-	
+
+	@GetMapping(value = "/usuarioPorNome/{nome}", produces = "application/json")
+	@CachePut("cashuser")
+	public ResponseEntity<List<Usuario>> usuarioPorNome(@PathVariable("nome") String nome) {
+
+		List<Usuario> list = (List<Usuario>) usuarioRepository.findByNomeContainingIgnoreCase(nome);
+
+		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
+	}
+
 	@PostMapping(value = "/", produces = "application/json")
 	public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
 		

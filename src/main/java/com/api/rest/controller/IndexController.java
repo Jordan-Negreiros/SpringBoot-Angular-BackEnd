@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import com.api.rest.model.Usuario;
 import com.api.rest.repository.UsuarioRepository;
 
-@CrossOrigin(origins = "www.sistemadocliente1.com.br") /* libera requisições ao Controller */
+@CrossOrigin(origins = "*") /* libera requisições ao Controller */
 @RestController /* Arquitetura Rest */
 @RequestMapping(value = "/usuario")
 public class IndexController {
@@ -24,7 +24,7 @@ public class IndexController {
 
 	/* Serviço RESTful */
 	@GetMapping(value = "/{id}", produces = "application/json")
-	@Cacheable("cashuser")
+	@CachePut("cashuser")
 	public ResponseEntity<Usuario> init(@PathVariable(value = "id") Long id) {
 		
 		Optional<Usuario> usuario = usuarioRepository.findById(id);
@@ -33,7 +33,7 @@ public class IndexController {
 	}
 
 	@GetMapping(value = "/", produces = "application/json")
-	@Cacheable("cashuser")
+	@CachePut("cashuser")
 	public ResponseEntity<List<Usuario>> usuario() {
 		
 		List<Usuario> list = (List<Usuario>) usuarioRepository.findAll();

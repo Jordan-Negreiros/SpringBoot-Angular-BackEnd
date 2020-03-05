@@ -1,6 +1,7 @@
 package com.api.rest.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 
 @Entity
 public class Usuario implements UserDetails {
@@ -23,6 +25,12 @@ public class Usuario implements UserDetails {
 	private String login;
 	private String senha;
 	private String nome;
+
+	@CPF(message = "CPF inválido")
+	private String cpf;
+
+	@Email(message = "Email inválido")
+	private String email;
 	
 	@OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Telefone> telefones = new ArrayList<Telefone>();
@@ -36,7 +44,7 @@ public class Usuario implements UserDetails {
 	inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id", table = "role",
 	unique = false, updatable = false,
 	foreignKey = @ForeignKey(name = "role_fk", value = ConstraintMode.CONSTRAINT)))
-	private List<Role> roles; /* acessos */
+	private List<Role> roles = new ArrayList<Role>(); /* acessos */
 	
 	public List<Telefone> getTelefones() {
 		return telefones;
@@ -68,7 +76,23 @@ public class Usuario implements UserDetails {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	
+
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

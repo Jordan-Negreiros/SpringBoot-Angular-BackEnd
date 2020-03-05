@@ -1,18 +1,17 @@
 package com.api.rest.controller;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.api.rest.model.Usuario;
+import com.api.rest.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import com.api.rest.model.Usuario;
-import com.api.rest.repository.UsuarioRepository;
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*") /* libera requisições ao Controller */
 @RestController /* Arquitetura Rest */
@@ -51,7 +50,7 @@ public class IndexController {
 	}
 
 	@PostMapping(value = "/", produces = "application/json")
-	public ResponseEntity<Usuario> cadastrar(@RequestBody Usuario usuario) {
+	public ResponseEntity<Usuario> cadastrar(@Valid @RequestBody Usuario usuario) {
 		
 		for (int i = 0; i < usuario.getTelefones().size(); i++) {
 			usuario.getTelefones().get(i).setUsuario(usuario);
@@ -65,13 +64,13 @@ public class IndexController {
 	}
 	
 	@PutMapping(value = "/", produces = "application/json")
-	public ResponseEntity<Usuario> atualizar(@RequestBody Usuario usuario) {
+	public ResponseEntity<Usuario> atualizar(@Valid @RequestBody Usuario usuario) {
 		
 		for (int i = 0; i < usuario.getTelefones().size(); i++) {
 			usuario.getTelefones().get(i).setUsuario(usuario);
 		}
 
-		Usuario userTemporario = usuarioRepository.findUserByLogin(usuario.getLogin());
+		Usuario userTemporario = usuarioRepository.findById(usuario.getId()).get();
 
 		if (!userTemporario.getSenha().equals(usuario.getSenha())) {
 			String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());

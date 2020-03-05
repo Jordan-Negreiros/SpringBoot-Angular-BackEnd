@@ -21,13 +21,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableTransactionManagement /* Configura transações com o banco de dados */
 @EnableWebMvc /* Habilita o Spring MVC */
 @RestController /* Habilita serviços Rest */
-@EnableAutoConfiguration
 @EnableCaching
 public class ProjetoapirestApplication implements WebMvcConfigurer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ProjetoapirestApplication.class, args);
-		System.out.println(new BCryptPasswordEncoder().encode("123"));
+		//System.out.println(new BCryptPasswordEncoder().encode("123"));
 	}
 
 

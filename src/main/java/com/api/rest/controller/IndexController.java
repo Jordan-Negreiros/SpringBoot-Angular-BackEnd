@@ -1,7 +1,9 @@
 package com.api.rest.controller;
 
 import com.api.rest.model.Usuario;
+import com.api.rest.repository.TelefoneRepository;
 import com.api.rest.repository.UsuarioRepository;
+import com.api.rest.service.ImplementacaoUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,12 @@ public class IndexController {
 	
 	@Autowired /* Injeção de Dependencia Spring, no CDI seria @Inject */
 	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private ImplementacaoUserDetailsService implementacaoUserDetailsService;
+
+	@Autowired
+	private TelefoneRepository telefoneRepository;
 
 	/* Serviço RESTful */
 	@GetMapping(value = "/{id}", produces = "application/json")
@@ -59,12 +67,14 @@ public class IndexController {
 		String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
 		usuario.setSenha(senhaCriptografada);
 		Usuario usuarioSalvo = usuarioRepository.save(usuario);
+
+		implementacaoUserDetailsService.insertAcessoPadrao(usuarioSalvo.getId());
 		
 		return new ResponseEntity<Usuario>(usuarioSalvo, HttpStatus.OK);
 	}
 	
 	@PutMapping(value = "/", produces = "application/json")
-	public ResponseEntity<Usuario> atualizar(@Valid @RequestBody Usuario usuario) {
+	public ResponseEntity<Usuario> atualizar(@RequestBody Usuario usuario) {
 		
 		for (int i = 0; i < usuario.getTelefones().size(); i++) {
 			usuario.getTelefones().get(i).setUsuario(usuario);
@@ -87,6 +97,12 @@ public class IndexController {
 		
 		usuarioRepository.deleteById(id);
 		
+		return "ok";
+	}
+
+	@DeleteMapping(value = "/removerTelefone/{id}", produces = "application/text")
+	public String deleteTelefone(@PathVariable("id") Long id) {
+		telefoneRepository.deleteById(id);
 		return "ok";
 	}
 	

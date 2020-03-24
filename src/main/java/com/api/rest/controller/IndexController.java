@@ -15,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*") /* libera requisições ao Controller */
@@ -62,13 +61,47 @@ public class IndexController {
 		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
 	}
 
+	/*END-POINT consulta de usuário por nome*/
 	@GetMapping(value = "/usuarioPorNome/{nome}", produces = "application/json")
 	@CachePut("cashuser")
-	public ResponseEntity<List<Usuario>> usuarioPorNome(@PathVariable("nome") String nome) {
+	public ResponseEntity<Page<Usuario>> usuarioPorNome (@PathVariable("nome") String nome) throws InterruptedException{
 
-		List<Usuario> list = (List<Usuario>) usuarioRepository.findByNomeContainingIgnoreCase(nome);
+		PageRequest pageRequest = null;
+		Page<Usuario> list = null;
 
-		return new ResponseEntity<List<Usuario>>(list, HttpStatus.OK);
+		if (nome == null || (nome != null && nome.trim().isEmpty())
+				|| nome.equalsIgnoreCase("undefined")) {/*Não informou nome*/
+
+			pageRequest = PageRequest.of(0, 5, Sort.by("nome"));
+			list =  usuarioRepository.findAll(pageRequest);
+		}else {
+			pageRequest = PageRequest.of(0, 5, Sort.by("nome"));
+			list = usuarioRepository.findUserByNamePage(nome, pageRequest);
+		}
+
+		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/usuarioPorNome/{nome}/page/{page}", produces = "application/json")
+	@CachePut("cashuser")
+	public ResponseEntity<Page<Usuario>> usuarioPorNomePage
+			(@PathVariable("nome") String nome, @PathVariable("page") int page) throws Exception{
+
+		PageRequest pageRequest = null;
+		Page<Usuario> list = null;
+
+		if (nome == null || (nome != null && nome.trim().isEmpty())
+				|| nome.equalsIgnoreCase("undefined")) { /* não informou o nome */
+
+			pageRequest = PageRequest.of(page, 5, Sort.by("nome"));
+			list = usuarioRepository.findAll(pageRequest);
+		} else {
+
+			pageRequest = PageRequest.of(page, 5, Sort.by("nome"));
+			list = usuarioRepository.findUserByNamePage(nome, pageRequest);
+		}
+
+		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/", produces = "application/json")

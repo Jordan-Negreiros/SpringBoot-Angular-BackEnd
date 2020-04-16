@@ -36,7 +36,11 @@ public class ProjetoapirestApplication implements WebMvcConfigurer {
 		//registry.addMapping("/**"); // todos
 		registry.addMapping("/usuario/**")
 				.allowedMethods("POST", "PUT", "DELETE") // todos os endpoints do usuario
-				.allowedOrigins("localhost:8080", "www.google.com");
+				.allowedOrigins("localhost:8080");
+
+		registry.addMapping("/profissao/**")
+				.allowedMethods("POST", "PUT", "DELETE") // todos os endpoints do usuario
+				.allowedOrigins("localhost:8080");
 	}
 
 }

@@ -1,14 +1,17 @@
 package com.api.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.*;
@@ -59,6 +62,22 @@ public class Usuario implements UserDetails {
                     		name = "role_fk",
 							value = ConstraintMode.CONSTRAINT)))
     private List<Role> roles = new ArrayList<Role>(); /* acessos */
+
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "dd/MM/yyyy")
+    private Date dataNascimento;
+
+    @ManyToOne
+    private Profissao profissao;
+
+    public Profissao getProfissao() {
+        return profissao;
+    }
+
+    public void setProfissao(Profissao profissao) {
+        this.profissao = profissao;
+    }
 
     public List<Telefone> getTelefones() {
         return telefones;
@@ -114,6 +133,14 @@ public class Usuario implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setDataNascimento(Date dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public Date getDataNascimento() {
+        return dataNascimento;
     }
 
     @Override

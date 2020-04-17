@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -70,6 +71,16 @@ public class Usuario implements UserDetails {
 
     @ManyToOne
     private Profissao profissao;
+
+    private BigDecimal salario;
+
+    public BigDecimal getSalario() {
+        return salario;
+    }
+
+    public void setSalario(BigDecimal salario) {
+        this.salario = salario;
+    }
 
     public Profissao getProfissao() {
         return profissao;

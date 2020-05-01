@@ -1,5 +1,6 @@
 package com.api.rest.controller;
 
+import com.api.rest.model.UserReport;
 import com.api.rest.model.Usuario;
 import com.api.rest.repository.TelefoneRepository;
 import com.api.rest.repository.UsuarioRepository;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*") /* libera requisições ao Controller */
@@ -161,13 +164,28 @@ public class IndexController {
 
 	@GetMapping(value = "/relatorio", produces = "application/text")
 	public ResponseEntity<String> downloadRelatorio(HttpServletRequest request) throws Exception {
-		byte[] pdf = serviceRelatorio.gerarRelatorio("relatorio-usuario", request.getServletContext());
+		byte[] pdf = serviceRelatorio.gerarRelatorio("relatorio-usuario",new HashMap(), request.getServletContext());
 
 		String base64Pdf = "data:application/pdf;base64," + Base64.encodeBase64String(pdf);
 
 		return new ResponseEntity<String>(base64Pdf, HttpStatus.OK);
 	}
-	
+
+	@PostMapping(value = "/relatorio/", produces = "application/text")
+	public ResponseEntity<String> downloadRelatorioParam(HttpServletRequest request,
+														 @RequestBody UserReport userReport) throws Exception {
+
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("DATA_INICIO", userReport.getDataInicio());
+		param.put("DATA_FIM", userReport.getDataFim());
+
+		byte[] pdf = serviceRelatorio.gerarRelatorio("relatorio-usuario-param",param ,request.getServletContext());
+
+		String base64Pdf = "data:application/pdf;base64," + Base64.encodeBase64String(pdf);
+
+		return new ResponseEntity<String>(base64Pdf, HttpStatus.OK);
+	}
+
 	/*
 		 //Exemplo de Customização métodos RESTful e URLs 
 		@GetMapping(value = "/{id}/relatóriopdf", produces = "application/json")

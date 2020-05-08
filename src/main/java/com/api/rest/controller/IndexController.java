@@ -1,5 +1,6 @@
 package com.api.rest.controller;
 
+import com.api.rest.model.UserChart;
 import com.api.rest.model.UserReport;
 import com.api.rest.model.Usuario;
 import com.api.rest.repository.TelefoneRepository;
@@ -14,12 +15,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,6 +42,9 @@ public class IndexController {
 
 	@Autowired
 	private ServiceRelatorio serviceRelatorio;
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
 	/* Serviço RESTful */
 	@GetMapping(value = "/{id}", produces = "application/json")
@@ -184,6 +190,26 @@ public class IndexController {
 		String base64Pdf = "data:application/pdf;base64," + Base64.encodeBase64String(pdf);
 
 		return new ResponseEntity<String>(base64Pdf, HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/grafico", produces = "application/json")
+	public ResponseEntity<UserChart> grafico() {
+		UserChart userChart = new UserChart();
+
+		String sql = "select array_agg(nome) from usuario where salario > 0 and nome <> '' union all "
+				+ " select cast(array_agg(salario) as character varying[]) from usuario where salario > 0 and nome <> '' ";
+
+		List<String> resultado = jdbcTemplate.queryForList(sql, String.class);
+
+		if (!resultado.isEmpty()) {
+			String nomes = resultado.get(0).replaceAll("\\{", "").replaceAll("\\}", "");
+			String salario = resultado.get(1).replaceAll("\\{", "").replaceAll("\\}", "");
+
+			userChart.setNome(nomes);
+			userChart.setSalario(salario);
+		}
+
+		return new ResponseEntity<UserChart>(userChart, HttpStatus.OK);
 	}
 
 	/*

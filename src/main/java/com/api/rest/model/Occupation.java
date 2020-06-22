@@ -7,15 +7,15 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 @Entity
-public class Profissao implements Serializable {
+public class Occupation implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String descricao;
+    private String description;
 
-    public Profissao() {
+    public Occupation() {
     }
 
     public Long getId() {
@@ -26,11 +26,11 @@ public class Profissao implements Serializable {
         this.id = id;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

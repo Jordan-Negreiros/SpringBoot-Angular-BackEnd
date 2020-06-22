@@ -10,18 +10,18 @@ import javax.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Telefone {
+public class Phone {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	private String numero;
+	private String number;
 	
 	@JsonIgnore
 	@ManyToOne(optional = false)
-	@JoinColumn(name="usuario_id")
-	private Usuario usuario;
+	@JoinColumn(name="user_id")
+	private User user;
 
 	public Long getId() {
 		return id;
@@ -31,20 +31,20 @@ public class Telefone {
 		this.id = id;
 	}
 
-	public String getNumero() {
-		return numero;
+	public String getNumber() {
+		return number;
 	}
 
-	public void setNumero(String numero) {
-		this.numero = numero;
+	public void setNumber(String number) {
+		this.number = number;
 	}
 
-	public Usuario getUsuario() {
-		return usuario;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 	

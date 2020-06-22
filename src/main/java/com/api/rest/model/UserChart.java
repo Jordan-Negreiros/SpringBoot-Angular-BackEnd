@@ -2,22 +2,22 @@ package com.api.rest.model;
 
 public class UserChart {
 
-    private String nome;
-    private String salario;
+    private String name;
+    private String salary;
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getSalario() {
-        return salario;
+    public String getSalary() {
+        return salary;
     }
 
-    public void setSalario(String salario) {
-        this.salario = salario;
+    public void setSalary(String salary) {
+        this.salary = salary;
     }
 }

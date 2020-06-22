@@ -1,8 +1,8 @@
 package com.api.rest.security;
 
 import com.api.rest.ApplicationContexLoad;
-import com.api.rest.model.Usuario;
-import com.api.rest.repository.UsuarioRepository;
+import com.api.rest.model.User;
+import com.api.rest.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -64,13 +64,13 @@ public class JWTTokenAutenticacaoService {
                     .getBody().getSubject(); /* Retorna o Usuário */
             if (user != null) {
 
-                Usuario usuario = ApplicationContexLoad.getApplicationContext()
-                        .getBean(UsuarioRepository.class).findUserByLogin(user);
+                User usuario = ApplicationContexLoad.getApplicationContext()
+                        .getBean(UserRepository.class).findUserByLogin(user);
 
                 /* Retornar usuário logado */
                 if (usuario != null) {
 
-                    return new UsernamePasswordAuthenticationToken(usuario.getLogin(), usuario.getSenha(), usuario.getAuthorities());
+                    return new UsernamePasswordAuthenticationToken(usuario.getLogin(), usuario.getPassword(), usuario.getAuthorities());
 
                 }
             }

@@ -1,8 +1,8 @@
 package com.api.rest.controller;
 
 import com.api.rest.ObjetoError;
-import com.api.rest.model.Usuario;
-import com.api.rest.repository.UsuarioRepository;
+import com.api.rest.model.User;
+import com.api.rest.repository.UserRepository;
 import com.api.rest.service.ServiceEnviaEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,18 +19,18 @@ import java.util.Calendar;
 public class RecuperaController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private ServiceEnviaEmail serviceEnviaEmail;
 
     @ResponseBody
     @PostMapping(value = "/")
-    public ResponseEntity<ObjetoError> recuperar(@RequestBody Usuario login) throws MessagingException {
+    public ResponseEntity<ObjetoError> recuperar(@RequestBody User login) throws MessagingException {
 
         ObjetoError objetoError = new ObjetoError();
 
-        Usuario user = usuarioRepository.findUserByLogin(login.getLogin());
+        User user = userRepository.findUserByLogin(login.getLogin());
 
         if (user == null) {
             objetoError.setCode("404"); /* não encontrado */
@@ -40,7 +40,7 @@ public class RecuperaController {
             String senhaNova = dateFormat.format(Calendar.getInstance().getTime());
 
             String senhaCriptografada = new BCryptPasswordEncoder().encode(senhaNova);
-            usuarioRepository.updateSenha(senhaCriptografada, user.getId());
+            userRepository.updatePassword(senhaCriptografada, user.getId());
 
             serviceEnviaEmail.enviarEmail("Recuperação de senha",
                     user.getEmail(),

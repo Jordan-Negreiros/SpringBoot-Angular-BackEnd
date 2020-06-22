@@ -1,6 +1,5 @@
 package com.api.rest.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
@@ -15,11 +14,11 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_role")
     private Long id;
 
-    private String nomeRole; /* Exemplo ROLE_SECRETARIO, ROLE_ADMIN */
+    private String nameRole; /* Exemplo ROLE_SECRETARIO, ROLE_ADMIN */
 
     @Override
     public String getAuthority() { /* Returna o nome no Acesso ROLE_SECRETARIO, ROLE_ADMIN etc */
-        return this.nomeRole;
+        return this.nameRole;
     }
 
     public Long getId() {
@@ -30,11 +29,11 @@ public class Role implements GrantedAuthority {
         this.id = id;
     }
 
-    public String getNomeRole() {
-        return nomeRole;
+    public String getNameRole() {
+        return nameRole;
     }
 
-    public void setNomeRole(String nomeRole) {
-        this.nomeRole = nomeRole;
+    public void setNameRole(String nameRole) {
+        this.nameRole = nameRole;
     }
 }

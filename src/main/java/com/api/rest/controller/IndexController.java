@@ -1,10 +1,10 @@
 package com.api.rest.controller;
 
+import com.api.rest.model.User;
 import com.api.rest.model.UserChart;
 import com.api.rest.model.UserReport;
-import com.api.rest.model.Usuario;
-import com.api.rest.repository.TelefoneRepository;
-import com.api.rest.repository.UsuarioRepository;
+import com.api.rest.repository.PhoneRepository;
+import com.api.rest.repository.UserRepository;
 import com.api.rest.service.ImplementacaoUserDetailsService;
 import com.api.rest.service.ServiceRelatorio;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -32,13 +32,13 @@ import java.util.Optional;
 public class IndexController {
 	
 	@Autowired /* Injeção de Dependencia Spring, no CDI seria @Inject */
-	private UsuarioRepository usuarioRepository;
+	private UserRepository userRepository;
 
 	@Autowired
 	private ImplementacaoUserDetailsService implementacaoUserDetailsService;
 
 	@Autowired
-	private TelefoneRepository telefoneRepository;
+	private PhoneRepository phoneRepository;
 
 	@Autowired
 	private ServiceRelatorio serviceRelatorio;
@@ -49,122 +49,122 @@ public class IndexController {
 	/* Serviço RESTful */
 	@GetMapping(value = "/{id}", produces = "application/json")
 	@CachePut("cashuser")
-	public ResponseEntity<Usuario> init(@PathVariable(value = "id") Long id) {
+	public ResponseEntity<User> init(@PathVariable(value = "id") Long id) {
 		
-		Optional<Usuario> usuario = usuarioRepository.findById(id);
+		Optional<User> usuario = userRepository.findById(id);
 		
-		return new ResponseEntity<Usuario>(usuario.get(), HttpStatus.OK);
+		return new ResponseEntity<User>(usuario.get(), HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/", produces = "application/json")
 	@CachePut("cashuser")
-	public ResponseEntity<Page<Usuario>> usuario() throws InterruptedException{
+	public ResponseEntity<Page<User>> usuario() throws InterruptedException{
 
 		PageRequest page = PageRequest.of(0, 5, Sort.by("nome"));
-		Page<Usuario> list = usuarioRepository.findAll(page);
+		Page<User> list = userRepository.findAll(page);
 
-		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
+		return new ResponseEntity<Page<User>>(list, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/page/{page}", produces = "application/json")
 	@CachePut("cashuser")
-	public ResponseEntity<Page<Usuario>> usuarioPage(@PathVariable("page") int pagina) throws InterruptedException{
+	public ResponseEntity<Page<User>> usuarioPage(@PathVariable("page") int pagina) throws InterruptedException{
 
 		PageRequest page = PageRequest.of(pagina, 5, Sort.by("nome"));
-		Page<Usuario> list = usuarioRepository.findAll(page);
+		Page<User> list = userRepository.findAll(page);
 
-		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
+		return new ResponseEntity<Page<User>>(list, HttpStatus.OK);
 	}
 
 	/*END-POINT consulta de usuário por nome*/
 	@GetMapping(value = "/usuarioPorNome/{nome}", produces = "application/json")
 	@CachePut("cashuser")
-	public ResponseEntity<Page<Usuario>> usuarioPorNome (@PathVariable("nome") String nome) throws InterruptedException{
+	public ResponseEntity<Page<User>> usuarioPorNome (@PathVariable("nome") String nome) throws InterruptedException{
 
 		PageRequest pageRequest = null;
-		Page<Usuario> list = null;
+		Page<User> list = null;
 
 		if (nome == null || (nome != null && nome.trim().isEmpty())
 				|| nome.equalsIgnoreCase("undefined")) {/*Não informou nome*/
 
 			pageRequest = PageRequest.of(0, 5, Sort.by("nome"));
-			list =  usuarioRepository.findAll(pageRequest);
+			list =  userRepository.findAll(pageRequest);
 		}else {
 			pageRequest = PageRequest.of(0, 5, Sort.by("nome"));
-			list = usuarioRepository.findUserByNamePage(nome, pageRequest);
+			list = userRepository.findUserByNamePage(nome, pageRequest);
 		}
 
-		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
+		return new ResponseEntity<Page<User>>(list, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/usuarioPorNome/{nome}/page/{page}", produces = "application/json")
 	@CachePut("cashuser")
-	public ResponseEntity<Page<Usuario>> usuarioPorNomePage
+	public ResponseEntity<Page<User>> usuarioPorNomePage
 			(@PathVariable("nome") String nome, @PathVariable("page") int page) throws Exception{
 
 		PageRequest pageRequest = null;
-		Page<Usuario> list = null;
+		Page<User> list = null;
 
 		if (nome == null || (nome != null && nome.trim().isEmpty())
 				|| nome.equalsIgnoreCase("undefined")) { /* não informou o nome */
 
 			pageRequest = PageRequest.of(page, 5, Sort.by("nome"));
-			list = usuarioRepository.findAll(pageRequest);
+			list = userRepository.findAll(pageRequest);
 		} else {
 
 			pageRequest = PageRequest.of(page, 5, Sort.by("nome"));
-			list = usuarioRepository.findUserByNamePage(nome, pageRequest);
+			list = userRepository.findUserByNamePage(nome, pageRequest);
 		}
 
-		return new ResponseEntity<Page<Usuario>>(list, HttpStatus.OK);
+		return new ResponseEntity<Page<User>>(list, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/", produces = "application/json")
-	public ResponseEntity<Usuario> cadastrar(@Valid @RequestBody Usuario usuario) {
+	public ResponseEntity<User> cadastrar(@Valid @RequestBody User user) {
 		
-		for (int i = 0; i < usuario.getTelefones().size(); i++) {
-			usuario.getTelefones().get(i).setUsuario(usuario);
+		for (int i = 0; i < user.getPhones().size(); i++) {
+			user.getPhones().get(i).setUser(user);
 		}
 
-		String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
-		usuario.setSenha(senhaCriptografada);
-		Usuario usuarioSalvo = usuarioRepository.save(usuario);
+		String senhaCriptografada = new BCryptPasswordEncoder().encode(user.getPassword());
+		user.setPasswordUser(senhaCriptografada);
+		User userSalvo = userRepository.save(user);
 
-		implementacaoUserDetailsService.insertAcessoPadrao(usuarioSalvo.getId());
+		implementacaoUserDetailsService.insertAcessoPadrao(userSalvo.getId());
 		
-		return new ResponseEntity<Usuario>(usuarioSalvo, HttpStatus.OK);
+		return new ResponseEntity<User>(userSalvo, HttpStatus.OK);
 	}
 	
 	@PutMapping(value = "/", produces = "application/json")
-	public ResponseEntity<Usuario> atualizar(@RequestBody Usuario usuario) {
+	public ResponseEntity<User> atualizar(@RequestBody User user) {
 		
-		for (int i = 0; i < usuario.getTelefones().size(); i++) {
-			usuario.getTelefones().get(i).setUsuario(usuario);
+		for (int i = 0; i < user.getPhones().size(); i++) {
+			user.getPhones().get(i).setUser(user);
 		}
 
-		Usuario userTemporario = usuarioRepository.findById(usuario.getId()).get();
+		User userTemporario = userRepository.findById(user.getId()).get();
 
-		if (!userTemporario.getSenha().equals(usuario.getSenha())) {
-			String senhaCriptografada = new BCryptPasswordEncoder().encode(usuario.getSenha());
-			usuario.setSenha(senhaCriptografada);
+		if (!userTemporario.getPassword().equals(user.getPassword())) {
+			String senhaCriptografada = new BCryptPasswordEncoder().encode(user.getPassword());
+			user.setPasswordUser(senhaCriptografada);
 		}
 		
-		Usuario usuarioSalvo = usuarioRepository.save(usuario);
+		User userSalvo = userRepository.save(user);
 		
-		return new ResponseEntity<Usuario>(usuarioSalvo, HttpStatus.OK);
+		return new ResponseEntity<User>(userSalvo, HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value = "/{id}", produces = "application/text")
 	public String delete(@PathVariable("id") Long id) {
 		
-		usuarioRepository.deleteById(id);
+		userRepository.deleteById(id);
 		
 		return "ok";
 	}
 
 	@DeleteMapping(value = "/removerTelefone/{id}", produces = "application/text")
 	public String deleteTelefone(@PathVariable("id") Long id) {
-		telefoneRepository.deleteById(id);
+		phoneRepository.deleteById(id);
 		return "ok";
 	}
 
@@ -182,8 +182,8 @@ public class IndexController {
 														 @RequestBody UserReport userReport) throws Exception {
 
 		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("DATA_INICIO", userReport.getDataInicio());
-		param.put("DATA_FIM", userReport.getDataFim());
+		param.put("DATA_INICIO", userReport.getStartDate());
+		param.put("DATA_FIM", userReport.getEndDate());
 
 		byte[] pdf = serviceRelatorio.gerarRelatorio("relatorio-usuario-param",param ,request.getServletContext());
 
@@ -196,8 +196,8 @@ public class IndexController {
 	public ResponseEntity<UserChart> grafico() {
 		UserChart userChart = new UserChart();
 
-		String sql = "select array_agg(nome) from usuario where salario > 0 and nome <> '' union all "
-				+ " select cast(array_agg(salario) as character varying[]) from usuario where salario > 0 and nome <> '' ";
+		String sql = "select array_agg(name) from user where salary > 0 and name <> '' union all "
+				+ " select cast(array_agg(salary) as character varying[]) from user where salary > 0 and name <> '' ";
 
 		List<String> resultado = jdbcTemplate.queryForList(sql, String.class);
 
@@ -205,8 +205,8 @@ public class IndexController {
 			String nomes = resultado.get(0).replaceAll("\\{", "").replaceAll("\\}", "");
 			String salario = resultado.get(1).replaceAll("\\{", "").replaceAll("\\}", "");
 
-			userChart.setNome(nomes);
-			userChart.setSalario(salario);
+			userChart.setName(nomes);
+			userChart.setSalary(salario);
 		}
 
 		return new ResponseEntity<UserChart>(userChart, HttpStatus.OK);

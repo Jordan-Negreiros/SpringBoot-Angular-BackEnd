@@ -1,6 +1,6 @@
 package com.api.rest.security;
 
-import com.api.rest.model.Usuario;
+import com.api.rest.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,10 +33,10 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
 
         /* Pega o TOKEN para validar */
-        Usuario user = new ObjectMapper().readValue(request.getInputStream(), Usuario.class);
+        User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
 
         /* Retorna o usuário, login, senha e acessos */
-        return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(user.getLogin(), user.getSenha()));
+        return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword()));
     }
 
     @Override

@@ -2,22 +2,22 @@ package com.api.rest.model;
 
 public class UserReport {
 
-    private String dataInicio;
-    private String dataFim;
+    private String startDate;
+    private String endDate;
 
-    public String getDataInicio() {
-        return dataInicio;
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setDataInicio(String dataInicio) {
-        this.dataInicio = dataInicio;
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 
-    public String getDataFim() {
-        return dataFim;
+    public String getEndDate() {
+        return endDate;
     }
 
-    public void setDataFim(String dataFim) {
-        this.dataFim = dataFim;
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }

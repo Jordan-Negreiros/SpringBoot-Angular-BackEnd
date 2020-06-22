@@ -2,24 +2,21 @@ package com.api.rest.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-
 @Entity
-public class Usuario implements UserDetails {
+public class User implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -28,30 +25,30 @@ public class Usuario implements UserDetails {
 
     @Column(unique = true)
     private String login;
-    private String senha;
-    private String nome;
+    private String password;
+    private String name;
 
-    @CPF(message = "CPF inválido")
+    @CPF(message = "CPF is invalid")
     private String cpf;
 
-    @Email(message = "Email inválido")
+    @Email(message = "Email is invalid")
     private String email;
 
-    @OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Telefone> telefones = new ArrayList<Telefone>();
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Phone> phones = new ArrayList<Phone>();
 
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "usuarios_role",
+    @JoinTable(name = "user_role",
             uniqueConstraints = @UniqueConstraint(
-                    columnNames = {"usuario_id", "role_id"},
+                    columnNames = {"user_id", "role_id"},
                     name = "unique_role_user"),
             joinColumns = @JoinColumn(
-            		name = "usuario_id",
+            		name = "user_id",
 					referencedColumnName = "id",
-					table = "usuario",
+					table = "user",
                     unique = false,
                     foreignKey = @ForeignKey(
-                    		name = "usuario_fk",
+                    		name = "user_fk",
 							value = ConstraintMode.CONSTRAINT)),
             inverseJoinColumns = @JoinColumn(
             		name = "role_id",
@@ -67,35 +64,35 @@ public class Usuario implements UserDetails {
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "dd/MM/yyyy")
-    private Date dataNascimento;
+    private Date birth;
 
     @ManyToOne
-    private Profissao profissao;
+    private Occupation occupation;
 
-    private BigDecimal salario;
+    private BigDecimal salary;
 
-    public BigDecimal getSalario() {
-        return salario;
+    public BigDecimal getSalary() {
+        return salary;
     }
 
-    public void setSalario(BigDecimal salario) {
-        this.salario = salario;
+    public void setSalary(BigDecimal salary) {
+        this.salary = salary;
     }
 
-    public Profissao getProfissao() {
-        return profissao;
+    public Occupation getOccupation() {
+        return occupation;
     }
 
-    public void setProfissao(Profissao profissao) {
-        this.profissao = profissao;
+    public void setOccupation(Occupation occupation) {
+        this.occupation = occupation;
     }
 
-    public List<Telefone> getTelefones() {
-        return telefones;
+    public List<Phone> getPhones() {
+        return phones;
     }
 
-    public void setTelefones(List<Telefone> telefones) {
-        this.telefones = telefones;
+    public void setPhones(List<Phone> phones) {
+        this.phones = phones;
     }
 
     public Long getId() {
@@ -114,20 +111,20 @@ public class Usuario implements UserDetails {
         this.login = login;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getPasswordUser() {
+        return password;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setPasswordUser(String password) {
+        this.password = password;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCpf() {
@@ -146,12 +143,12 @@ public class Usuario implements UserDetails {
         this.email = email;
     }
 
-    public void setDataNascimento(Date dataNascimento) {
-        this.dataNascimento = dataNascimento;
+    public void setBirth(Date birth) {
+        this.birth = birth;
     }
 
-    public Date getDataNascimento() {
-        return dataNascimento;
+    public Date getBirth() {
+        return birth;
     }
 
     @Override
@@ -170,7 +167,7 @@ public class Usuario implements UserDetails {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Usuario other = (Usuario) obj;
+        User other = (User) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -189,7 +186,7 @@ public class Usuario implements UserDetails {
     @JsonIgnore
     @Override
     public String getPassword() {
-        return this.senha;
+        return this.password;
     }
 
     @JsonIgnore

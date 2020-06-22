@@ -1,7 +1,7 @@
 package com.api.rest.controller;
 
-import com.api.rest.model.Profissao;
-import com.api.rest.repository.ProfissaoRepository;
+import com.api.rest.model.Occupation;
+import com.api.rest.repository.OccupationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +16,13 @@ import java.util.List;
 public class ProfissaoController {
 
     @Autowired
-    private ProfissaoRepository profissaoRepository;
+    private OccupationRepository occupationRepository;
 
     @GetMapping(value = "/", produces = "application/json")
-    public ResponseEntity<List<Profissao>> profissoes() {
+    public ResponseEntity<List<Occupation>> profissoes() {
 
-        List<Profissao> profissaoList = profissaoRepository.findAll();
+        List<Occupation> occupationList = occupationRepository.findAll();
 
-        return new ResponseEntity<List<Profissao>>(profissaoList, HttpStatus.OK);
+        return new ResponseEntity<List<Occupation>>(occupationList, HttpStatus.OK);
     }
 }

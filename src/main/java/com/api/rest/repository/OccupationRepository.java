@@ -1,9 +1,9 @@
 package com.api.rest.repository;
 
-import com.api.rest.model.Profissao;
+import com.api.rest.model.Occupation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProfissaoRepository extends JpaRepository<Profissao, Long> {
+public interface OccupationRepository extends JpaRepository<Occupation, Long> {
 }
